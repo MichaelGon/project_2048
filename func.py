@@ -134,6 +134,7 @@ def make_turn(game):
 
 def new_pieces(game):
     arr = game.board_values
+    
     over = False
     counter = 0
 
