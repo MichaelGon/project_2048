@@ -1,12 +1,12 @@
 import random
 
 
-def is_any(game):
-    arr = game.board_values
-    help = [[False for _ in range(4)] for _ in range(4)]
+SIZE = 4
 
-    for i in range(4):
-        for j in range(4):
+
+def left(arr, help):
+    for i in range(SIZE):
+        for j in range(SIZE):
             helper = 0
 
             if i > 0:
@@ -14,44 +14,74 @@ def is_any(game):
                     if arr[k][j] == 0:
                         helper += 1
 
-                if arr[i - helper - 1][j] == arr[i - helper][j] and not help[i - helper - 1][j] and not help[i - helper][j]:
+                if (arr[i - helper - 1][j] == arr[i - helper][j]
+                        and not help[i - helper - 1][j]
+                        and not help[i - helper][j]):
                     return True
+    return False
 
-    for i in range(3):
-        for j in range(4):
+
+def right(arr, help):
+    for i in range(SIZE - 1):
+        for j in range(SIZE):
             helper = 0
 
             for k in range(i + 1):
-                if arr[3 - k][j] == 0:
+                if arr[SIZE - 1 - k][j] == 0:
                     helper += 1
 
-            if 3 - i + helper <= 3:
-                if arr[2 - i + helper][j] == arr[3 - i + helper][j] and not help[3 - i + helper][j] and not help[2 - i + helper][j]:
+            if SIZE - 1 - i + helper <= SIZE - 1:
+                if (arr[SIZE - 2 - i + helper][j] == arr[SIZE - 1 - i + helper][j]
+                        and not help[SIZE - 1 - i + helper][j]
+                        and not help[SIZE - 2 - i + helper][j]):
                     return True
+    return False
 
-    for i in range(4):
-        for j in range(4):
+
+def higher(arr, help):
+    for i in range(SIZE):
+        for j in range(SIZE):
             helper = 0
 
             for k in range(j):
                 if arr[i][k] == 0:
                     helper += 1
 
-            if j > 0 and arr[i][j - helper] == arr[i][j - helper - 1] and not help[i][j - helper - 1] and not help[i][j - helper]:
+            if (j > 0 and arr[i][j - helper] == arr[i][j - helper - 1]
+                    and not help[i][j - helper - 1]
+                    and not help[i][j - helper]):
                 return True
+    return False
 
-    for i in range(4):
-        for j in range(3, -1, -1):
+
+def lower(arr, help):
+    for i in range(SIZE):
+        for j in range(SIZE - 1, -1, -1):
             helper = 0
 
-            for k in range(3, j, -1):
+            for k in range(SIZE - 1, j, -1):
                 if arr[i][k] == 0:
                     helper += 1
 
-            if 1 + j + helper <= 3:
-                if arr[i][j + helper] == arr[i][1 + j + helper] and not help[i][j + helper] and not help[i][1 + j + helper]:
+            if 1 + j + helper <= SIZE - 1:
+                if (arr[i][j + helper] == arr[i][1 + j + helper]
+                        and not help[i][j + helper]
+                        and not help[i][1 + j + helper]):
                     return True
     return False
+
+
+def is_any(game):
+    arr = game.board_values
+    help = [[False for _ in range(SIZE)] for _ in range(SIZE)]
+    ans = False
+
+    ans = ans | left(arr, help)
+    ans = ans | right(arr, help)
+    ans = ans | higher(arr, help)
+    ans = ans | lower(arr, help)
+
+    return ans
 
 
 def make_turn(game):
@@ -71,7 +101,9 @@ def make_turn(game):
                         arr[i - helper][j] = arr[i][j]
                         arr[i][j] = 0
 
-                    if arr[i - helper - 1][j] == arr[i - helper][j] and not combined[i - helper - 1][j] and not combined[i - helper][j]:
+                    if (arr[i - helper - 1][j] == arr[i - helper][j]
+                            and not combined[i - helper - 1][j]
+                            and not combined[i - helper][j]):
                         arr[i - helper - 1][j] *= 2
                         game.score += arr[i - helper - 1][j]
                         arr[i - helper][j] = 0
@@ -89,7 +121,9 @@ def make_turn(game):
                     arr[2 - i][j] = 0
 
                 if 3 - i + helper <= 3:
-                    if arr[2 - i + helper][j] == arr[3 - i + helper][j] and not combined[3 - i + helper][j] and not combined[2 - i + helper][j]:
+                    if (arr[2 - i + helper][j] == arr[3 - i + helper][j]
+                            and not combined[3 - i + helper][j]
+                            and not combined[2 - i + helper][j]):
                         arr[3 - i + helper][j] *= 2
                         game.score += arr[3 - i + helper][j]
                         arr[2 - i + helper][j] = 0
@@ -106,7 +140,9 @@ def make_turn(game):
                     arr[i][j - helper] = arr[i][j]
                     arr[i][j] = 0
 
-                if j > 0 and arr[i][j - helper] == arr[i][j - helper - 1] and not combined[i][j - helper - 1] and not combined[i][j - helper]:
+                if (j > 0 and arr[i][j - helper] == arr[i][j - helper - 1]
+                        and not combined[i][j - helper - 1]
+                        and not combined[i][j - helper]):
                     arr[i][j - helper - 1] *= 2
                     game.score += arr[i][j - helper - 1]
                     arr[i][j - helper] = 0
@@ -124,7 +160,9 @@ def make_turn(game):
                     arr[i][j] = 0
 
                 if 1 + j + helper <= 3:
-                    if arr[i][j + helper] == arr[i][1 + j + helper] and not combined[i][j + helper] and not combined[i][1 + j + helper]:
+                    if (arr[i][j + helper] == arr[i][1 + j + helper]
+                            and not combined[i][j + helper]
+                            and not combined[i][1 + j + helper]):
                         arr[i][1 + j + helper] *= 2
                         game.score += arr[i][j + helper + 1]
                         arr[i][j + helper] = 0
@@ -134,7 +172,6 @@ def make_turn(game):
 
 def new_pieces(game):
     arr = game.board_values
-    
     over = False
     counter = 0
 
