@@ -2,11 +2,12 @@ import pygame
 import sqlite3
 pygame.font.init()
 
+WIDTH = 400
+HEIGHT = 500
+
 
 class Globals(object):
     REZ = list()
-    WIDTH = 400
-    HEIGHT = 500
     screen = pygame.display.set_mode([WIDTH, HEIGHT])
     pygame.display.set_caption("Game 2048")
 
