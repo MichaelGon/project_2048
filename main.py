@@ -1,4 +1,4 @@
-from game_loop import loop
+from game_loop import Loop
 from init import Globals
 import pygame
 from visual import draw_intro
@@ -6,9 +6,10 @@ from visual import draw_intro
 
 pygame.init()
 
-game = Globals()
-draw_intro(game)
+consts = Globals()
+draw_intro(consts)
 
-loop(game)
+game = Loop(consts)
+game.loop()
 
 pygame.quit()
